@@ -1,4 +1,4 @@
-# markdown-code-example-insertion
+# markdown-code-example-inserter
 
 Syncs markdown documentation with code examples.
 
