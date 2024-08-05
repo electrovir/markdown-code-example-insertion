@@ -1,13 +1,6 @@
 import {getObjectTypedKeys} from '@augment-vir/common';
-import languages from 'language-map';
-import {extname} from 'path';
-
-export type LanguageName = keyof typeof languages;
-
-// extension -> language name pairs that must be excluded
-const languageExcludeFilters: {[extension: string]: LanguageName[]} = {
-    '.md': ['GCC Machine Description'],
-};
+import {extname} from 'node:path';
+import {LanguageEntry, languageMap, LanguageName} from './language-map.js';
 
 // extensions that will never match any other language name
 const requiredLanguageExtension: Partial<Record<LanguageName, string>> = {
@@ -17,35 +10,27 @@ const requiredLanguageExtension: Partial<Record<LanguageName, string>> = {
 export function getFileLanguageName(fileName: string): LanguageName | undefined {
     const extension = extname(fileName);
 
-    const matchedLanguageNames: LanguageName[] = getObjectTypedKeys(languages).filter(
-        (languageName) => {
-            const languageData = languages[languageName];
+    const matchedLanguageNames = getObjectTypedKeys(languageMap).filter((languageName) => {
+        const languageData: LanguageEntry = languageMap[languageName];
 
-            if (!('extensions' in languageData)) {
-                return false;
-            }
+        if (!('extensions' in languageData)) {
+            return false;
+        }
 
-            const requiredExtensionForLanguage = requiredLanguageExtension[languageName];
-            if (
-                languageName in requiredLanguageExtension &&
-                requiredExtensionForLanguage !== extension
-            ) {
-                return false;
-            }
+        const requiredExtensionForLanguage = requiredLanguageExtension[languageName];
+        if (
+            languageName in requiredLanguageExtension &&
+            requiredExtensionForLanguage !== extension
+        ) {
+            return false;
+        }
 
-            const exclusions = languageExcludeFilters[extension];
-
-            if (exclusions && exclusions.includes(languageName)) {
-                return false;
-            }
-
-            return languageData.extensions.includes(extension);
-        },
-    );
+        return languageData.extensions.includes(extension);
+    });
 
     if (matchedLanguageNames.length > 1) {
         console.warn(
-            `Multiple languages for code block were matched for "${fileName}": ${matchedLanguageNames.join(
+            `Multiple languages for code block were matched for '${fileName}': ${matchedLanguageNames.join(
                 ', ',
             )}`,
         );

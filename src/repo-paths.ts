@@ -1,6 +1,6 @@
-import {join} from 'path';
+import {join} from 'node:path';
 
-export const repoRootDir = __dirname.replace(
+export const repoRootDir = import.meta.dirname.replace(
     /(?:src|node_modules\/markdown-code-example-inserter\/dist|dist)$/,
     '',
 );

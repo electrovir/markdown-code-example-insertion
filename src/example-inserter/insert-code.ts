@@ -1,5 +1,5 @@
-import {CodeExampleLink} from '../parsing-markdown/extract-links';
-import {LanguageName} from './get-file-language-name';
+import {CodeExampleLink} from '../parsing-markdown/extract-links.js';
+import {LanguageName} from './language-map.js';
 
 const markdownCodeBlockWrapper = '```';
 

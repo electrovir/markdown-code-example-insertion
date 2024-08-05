@@ -1,5 +1,6 @@
-import {existsSync, readFile} from 'fs-extra';
-import {join, resolve} from 'path';
+import {existsSync} from 'node:fs';
+import {readFile} from 'node:fs/promises';
+import {join, resolve} from 'node:path';
 
 export type PackageDetails = {
     packageName: string | undefined;

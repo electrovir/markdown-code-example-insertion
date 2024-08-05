@@ -1,6 +1,6 @@
 export function createOrderedLogging(): (
     index: number,
-    consoleMethod: Function,
+    consoleMethod: typeof console.log,
     ...args: string[]
 ) => void {
     let currentIndex = 0;
@@ -8,7 +8,7 @@ export function createOrderedLogging(): (
         number,
         {
             args: string[];
-            consoleMethod: Function;
+            consoleMethod: typeof console.log;
         }
     >();
 
@@ -22,7 +22,11 @@ export function createOrderedLogging(): (
         }
     }
 
-    function setAndLogInOrder(index: number, consoleMethod: Function, ...args: string[]): void {
+    function setAndLogInOrder(
+        index: number,
+        consoleMethod: typeof console.log,
+        ...args: string[]
+    ): void {
         forFutureLogging.set(index, {
             consoleMethod,
             args,

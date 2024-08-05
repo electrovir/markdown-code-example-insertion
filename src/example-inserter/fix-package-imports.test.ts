@@ -1,7 +1,8 @@
-import {expect} from 'chai';
-import {join} from 'path';
-import {noSourceCodeDir} from '../repo-paths';
-import {fixPackageImports} from './fix-package-imports';
+import assert from 'node:assert/strict';
+import {join} from 'node:path';
+import {describe, it} from 'node:test';
+import {noSourceCodeDir} from '../repo-paths.js';
+import {fixPackageImports} from './fix-package-imports.js';
 
 describe(fixPackageImports.name, () => {
     it('fix index dir imports', async () => {
@@ -23,7 +24,7 @@ describe(fixPackageImports.name, () => {
             },
         );
 
-        expect(newCode).to.equal(`import blah from 'derp';`);
+        assert.strictEqual(newCode, `import blah from 'derp';`);
     });
 
     it('fix index file imports with file name', async () => {
@@ -45,7 +46,7 @@ describe(fixPackageImports.name, () => {
             },
         );
 
-        expect(newCode).to.equal(`import blah from 'derp';`);
+        assert.strictEqual(newCode, `import blah from 'derp';`);
     });
 
     it('fix index file imports no trailing slash', async () => {
@@ -67,7 +68,7 @@ describe(fixPackageImports.name, () => {
             },
         );
 
-        expect(newCode).to.equal(`import blah from 'derp';`);
+        assert.strictEqual(newCode, `import blah from 'derp';`);
     });
 
     it('fix index file imports and nothing else', async () => {
@@ -90,7 +91,10 @@ describe(fixPackageImports.name, () => {
             },
         );
 
-        expect(newCode).to.equal(`import blah from 'derp';
-                    const thingie = ['yo hi there', 'hello to you too'];`);
+        assert.strictEqual(
+            newCode,
+            `import blah from 'derp';
+                    const thingie = ['yo hi there', 'hello to you too'];`,
+        );
     });
 });

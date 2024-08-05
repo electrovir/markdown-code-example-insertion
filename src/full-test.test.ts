@@ -1,24 +1,31 @@
+import {addSuffix, mapObjectValues, removeColor} from '@augment-vir/common';
 import {interpolationSafeWindowsPath, runShellCommand, ShellOutput} from '@augment-vir/node-js';
-import chai, {assert} from 'chai';
-import {readFile, writeFile} from 'fs/promises';
-import {basename, join} from 'path';
-import {assertExpectation} from 'test-established-expectations';
-import {forceIndexTrigger} from './cli';
-import {forcedIndexExampleDir, fullPackageExampleDir, fullPackageExampleFiles} from './repo-paths';
+import assert from 'node:assert/strict';
+import {readFile, writeFile} from 'node:fs/promises';
+import {join, sep} from 'node:path';
+import {describe, it, TestContext} from 'node:test';
+import {isRunTimeType} from 'run-time-assertions';
+import {forceIndexTrigger} from './cli.js';
+import {
+    forcedIndexExampleDir,
+    fullPackageExampleDir,
+    fullPackageExampleFiles,
+    repoRootDir,
+} from './repo-paths.js';
 
-chai.config.truncateThreshold = 0;
-
-async function runCli({
-    args,
-    dir,
-    expectationKey,
-    shouldPass,
-}: {
-    args: string[];
-    dir: string;
-    expectationKey: string;
-    shouldPass: boolean;
-}) {
+async function runCli(
+    context: TestContext,
+    {
+        args,
+        dir,
+        shouldPass,
+    }: {
+        args: string[];
+        dir: string;
+        expectationKey: string;
+        shouldPass: boolean;
+    },
+) {
     const cliBinPath = join(process.cwd(), 'dist', 'cli.js');
     const commandToRun = interpolationSafeWindowsPath(`node ${cliBinPath} ${args.join(' ')}`);
 
@@ -29,13 +36,19 @@ async function runCli({
     delete result.error;
     delete result.exitSignal;
 
-    await assertExpectation({
-        key: {
-            topKey: basename(dir),
-            subKey: expectationKey,
-        },
-        result,
-    });
+    // @ts-expect-error: this type isn't included in @types/node yet
+    context.assert.snapshot(
+        mapObjectValues(result, (key, value) => {
+            if (isRunTimeType(value, 'string')) {
+                return removeColor(value).replaceAll(
+                    addSuffix({value: repoRootDir, suffix: sep}),
+                    '',
+                );
+            } else {
+                return value;
+            }
+        }),
+    );
 
     if (shouldPass) {
         assert.strictEqual(result.exitCode, 0, 'command should have passed');
@@ -45,8 +58,8 @@ async function runCli({
 }
 
 describe('cli.js', () => {
-    it('should produce correct output when a check passes', async () => {
-        await runCli({
+    it('should produce correct output when a check passes', async (context) => {
+        await runCli(context, {
             args: [
                 fullPackageExampleFiles.readmeExpectation,
                 '--check',
@@ -57,8 +70,8 @@ describe('cli.js', () => {
         });
     });
 
-    it('should produce correct output when a check fails', async () => {
-        await runCli({
+    it('should produce correct output when a check fails', async (context) => {
+        await runCli(context, {
             args: [
                 join(fullPackageExampleDir, '*.md'),
                 '--check',
@@ -69,12 +82,12 @@ describe('cli.js', () => {
         });
     });
 
-    it('supports forced index flag', async () => {
+    it('supports forced index flag', async (context) => {
         const completeMarkdownPath = join(forcedIndexExampleDir, 'complete.md');
         const incompleteMarkdownPath = join(forcedIndexExampleDir, 'incomplete.md');
         const incompleteContentsBeforeFixing = (await readFile(incompleteMarkdownPath)).toString();
         try {
-            await runCli({
+            await runCli(context, {
                 args: [
                     completeMarkdownPath,
                     '--check',
@@ -88,7 +101,7 @@ describe('cli.js', () => {
 
             const completeContents = (await readFile(completeMarkdownPath)).toString();
 
-            await runCli({
+            await runCli(context, {
                 args: [
                     incompleteMarkdownPath,
                     forceIndexTrigger,
@@ -104,11 +117,10 @@ describe('cli.js', () => {
             ).toString();
 
             assert.strictEqual(incompleteContentsAfterFixing, completeContents);
-        } catch (error) {
         } finally {
             await writeFile(incompleteMarkdownPath, incompleteContentsBeforeFixing);
 
-            await runCli({
+            await runCli(context, {
                 args: [
                     incompleteMarkdownPath,
                     '--check',

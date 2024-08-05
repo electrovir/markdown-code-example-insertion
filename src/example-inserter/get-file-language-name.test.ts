@@ -1,9 +1,10 @@
-import {expect} from 'chai';
-import {getFileLanguageName} from './get-file-language-name';
+import assert from 'node:assert/strict';
+import {describe, it} from 'node:test';
+import {getFileLanguageName} from './get-file-language-name.js';
 
 describe(getFileLanguageName.name, () => {
     it('gets correct file name for common file extensions', () => {
-        expect(
+        assert.deepStrictEqual(
             [
                 'index.js',
                 'index.ts',
@@ -17,18 +18,19 @@ describe(getFileLanguageName.name, () => {
                 'index.yml',
                 'index.xml',
             ].map((fileName) => getFileLanguageName(fileName)?.toLowerCase()),
-        ).to.deep.equal([
-            'javascript',
-            'typescript',
-            'ruby',
-            'markdown',
-            'python',
-            'c++',
-            'c',
-            'java',
-            'json',
-            'yaml',
-            'xml',
-        ]);
+            [
+                'javascript',
+                'typescript',
+                'ruby',
+                'markdown',
+                'python',
+                'c++',
+                'c',
+                'java',
+                'json',
+                'yaml',
+                'xml',
+            ],
+        );
     });
 });

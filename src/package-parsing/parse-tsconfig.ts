@@ -1,6 +1,6 @@
 import {replaceWithWindowsPathIfNeeded} from '@augment-vir/node-js';
-import {existsSync} from 'fs-extra';
-import {join} from 'path';
+import {existsSync} from 'node:fs';
+import {join} from 'node:path';
 import {ParsedCommandLine, parseJsonConfigFileContent, readConfigFile, sys} from 'typescript';
 
 export type TsDirs = {
@@ -31,7 +31,7 @@ function findAndReadTSConfig(packageDir: string): ParsedCommandLine | undefined 
         return undefined;
     }
 
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     const configFile = readConfigFile(tsConfigPath, sys.readFile);
-    const configContent = parseJsonConfigFileContent(configFile.config, sys, packageDir);
-    return configContent;
+    return parseJsonConfigFileContent(configFile.config, sys, packageDir);
 }

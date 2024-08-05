@@ -1,8 +1,9 @@
-import {expect} from 'chai';
+import assert from 'node:assert/strict';
+import {describe, it} from 'node:test';
 import type {Literal, Node, Parent, Position} from 'unist';
-import {noSourceCodeFiles} from '../repo-paths';
-import {parseHtmlContents, parseMarkdownContents, parseMarkdownFile} from './parse-markdown';
-import {WalkLanguages, walk} from './walk';
+import {noSourceCodeFiles} from '../repo-paths.js';
+import {parseHtmlContents, parseMarkdownContents, parseMarkdownFile} from './parse-markdown.js';
+import {WalkLanguages, walk} from './walk.js';
 
 describe(walk.name, () => {
     async function getRootNode(filePath: string): Promise<Node> {
@@ -16,7 +17,7 @@ describe(walk.name, () => {
             nodeTypes.push(`${node.type}:${language}`);
         });
 
-        expect(nodeTypes).to.deep.equal([
+        assert.deepStrictEqual(nodeTypes, [
             'root:markdown',
             'heading:markdown',
             'text:markdown',
@@ -38,7 +39,7 @@ describe(walk.name, () => {
             nodeTypes.push(`${node.type}:${language}`);
         });
 
-        expect(nodeTypes).to.deep.equal([
+        assert.deepStrictEqual(nodeTypes, [
             'root:markdown',
             'heading:markdown',
             'text:markdown',
@@ -53,7 +54,7 @@ describe(walk.name, () => {
             'text:markdown',
         ]);
     });
-    it('markdown with comment positions', async () => {
+    it('markdown with comment positions', () => {
         const positions: {
             type: string;
             value: unknown;
@@ -74,7 +75,7 @@ describe(walk.name, () => {
             },
         );
 
-        expect(positions).to.deep.equal([
+        assert.deepStrictEqual(positions, [
             {
                 type: 'root',
                 value: undefined,
@@ -197,7 +198,7 @@ describe(walk.name, () => {
         ]);
     });
 
-    it('html only parsing produces the correct list of types', async () => {
+    it('html only parsing produces the correct list of types', () => {
         const nodeTypes: string[] = [];
 
         walk(
@@ -210,7 +211,7 @@ describe(walk.name, () => {
             },
         );
 
-        expect(nodeTypes).to.deep.equal([
+        assert.deepStrictEqual(nodeTypes, [
             'root:html',
             'element:html',
             'text:html',
@@ -220,23 +221,24 @@ describe(walk.name, () => {
         ]);
     });
 
-    it('html parsing a comment only produces a comment node', async () => {
+    it('html parsing a comment only produces a comment node', () => {
         const nodeTypes: string[] = [];
 
         walk(parseHtmlContents('<!-- comment is here -->'), 'html', (node, language) => {
             nodeTypes.push(`${node.type}:${language}`);
         });
 
-        expect(nodeTypes).to.deep.equal([
+        assert.deepStrictEqual(nodeTypes, [
             'root:html',
             'comment:html',
         ]);
     });
 
-    it('node line positions make sense', async () => {
+    it('node line positions make sense', () => {
         const positions: {type: string; value: unknown; position: Position | undefined}[] = [];
 
         walk(parseMarkdownContents('### honda\n_infinity_\n**buick**'), 'markdown', (node) => {
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             if (!(node as Parent).children) {
                 positions.push({
                     type: node.type,
@@ -246,7 +248,7 @@ describe(walk.name, () => {
             }
         });
 
-        expect(positions).to.deep.equal([
+        assert.deepStrictEqual(positions, [
             {
                 type: 'text',
                 value: 'honda',

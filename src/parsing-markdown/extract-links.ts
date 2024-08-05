@@ -1,10 +1,10 @@
 import type {Comment} from 'hast';
 import type {Code, HTML} from 'mdast';
 import type {Node, Point, Position} from 'unist';
-import {InvalidNodeError} from '../errors/invalid-node.error';
-import {linkCommentTriggerPhrase, startsWithTriggerPhraseRegExp} from '../trigger-phrase';
-import {isCodeBlock, isCommentNode, parseMarkdownContents} from './parse-markdown';
-import {walk} from './walk';
+import {InvalidNodeError} from '../errors/invalid-node.error.js';
+import {linkCommentTriggerPhrase, startsWithTriggerPhraseRegExp} from '../trigger-phrase.js';
+import {isCodeBlock, isCommentNode, parseMarkdownContents} from './parse-markdown.js';
+import {walk} from './walk.js';
 
 export interface FullyDefinedPoint extends Point {
     offset: number;
@@ -35,7 +35,7 @@ export function extractIndent(
     node: Readonly<{value: unknown} & FullyPositionedNode>,
 ): string {
     if (typeof node.value === 'string' && line.trim().startsWith(node.value)) {
-        return line.substring(
+        return line.slice(
             0,
             // column is 1 indexed so we must remove 1 from it
             node.position.start.column - 1,
@@ -102,7 +102,7 @@ export function extractLinks(
         lastNode = node;
     });
 
-    const codeExampleLinks = commentData.map((comment): CodeExampleLink => {
+    return commentData.map((comment): CodeExampleLink => {
         assertFullyPositionedNode(comment.comment);
 
         return {
@@ -115,8 +115,6 @@ export function extractLinks(
             linkedCodeBlock: comment.codeBlock,
         };
     });
-
-    return codeExampleLinks;
 }
 
 function offsetNodePosition<T extends Node>(

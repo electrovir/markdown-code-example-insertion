@@ -1,8 +1,8 @@
 import {getSystemRootPath, toPosixPath} from '@augment-vir/node-js';
-import {dirname, join, posix, relative} from 'path';
+import {dirname, join, posix, relative} from 'node:path';
 import {ParsedCommandLine} from 'typescript';
-import {guessPackageIndex} from '../package-parsing/package-index';
-import {LanguageName} from './get-file-language-name';
+import {guessPackageIndex} from '../package-parsing/package-index.js';
+import {LanguageName} from './language-map.js';
 
 const languageImportFixMap: Partial<
     Record<LanguageName, (code: string, regExpSafePosixPath: string, replaceName: string) => string>
@@ -27,7 +27,7 @@ export async function fixPackageImports(
     // fix imports
     if (packageIndex.replaceName) {
         const forceIndexFullPath = forceIndexPath
-            ? forceIndexPath?.startsWith(getSystemRootPath())
+            ? forceIndexPath.startsWith(getSystemRootPath())
                 ? forceIndexPath
                 : join(packageDir, forceIndexPath)
             : '';
@@ -38,7 +38,7 @@ export async function fixPackageImports(
         );
         const regExpSafePosixPath = toPosixPath(
             relativePath.startsWith('.') ? relativePath : `./${relativePath}`,
-        ).replace(/\./g, '\\.');
+        ).replace(/\./g, String.raw`\.`);
 
         const importFixer = languageImportFixMap[language];
 
@@ -60,12 +60,12 @@ function fixTypescriptImports(
         'g',
     );
     const bareIndexDirImportRegExp = new RegExp(
-        `( from ['"\`])${posix.dirname(regExpSafePosixPath)}\/?(['"\`])`,
+        `( from ['"\`])${posix.dirname(regExpSafePosixPath)}/?(['"\`])`,
         'g',
     );
 
     let newCode = code.replace(indexFileImportRegExp, `$1${replaceName}$2`);
-    if (posix.basename(regExpSafePosixPath).startsWith('index\\.')) {
+    if (posix.basename(regExpSafePosixPath).startsWith(String.raw`index\.`)) {
         newCode = newCode.replace(bareIndexDirImportRegExp, `$1${replaceName}$2`);
     }
 

@@ -1,10 +1,10 @@
-import {readFile} from 'fs-extra';
 import type {Comment, Root as HtmlRoot} from 'hast';
 import type {Code, HTML, Root as MarkdownRoot} from 'mdast';
+import {readFile} from 'node:fs/promises';
 import rehypeParse from 'rehype-parse';
 import remarkParse from 'remark-parse';
 import remarkRehype from 'remark-rehype';
-import unified from 'unified';
+import {unified} from 'unified';
 import type {Node} from 'unist';
 
 const markdownParser = unified().use(remarkParse).use(remarkRehype);
@@ -16,8 +16,7 @@ export async function parseMarkdownFile(markdownFilePath: string): Promise<Markd
 }
 
 export function parseMarkdownContents(markdownFileContents: string | Buffer): MarkdownRoot {
-    const parsedContents = markdownParser.parse(markdownFileContents);
-    return parsedContents as MarkdownRoot;
+    return markdownParser.parse(markdownFileContents);
 }
 
 export function isCommentNode(input: Node): input is Comment {
@@ -33,7 +32,7 @@ export function isHtmlNode(input: Node): input is HTML {
 }
 
 export function parseHtmlContents(htmlContents: string): HtmlRoot {
-    return htmlParser.parse(htmlContents) as HtmlRoot;
+    return htmlParser.parse(htmlContents);
 }
 
 export function parseHtmlNode(htmlNode: HTML): HtmlRoot {

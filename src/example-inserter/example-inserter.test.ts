@@ -1,11 +1,12 @@
-import {assert, expect} from 'chai';
-import {readFile} from 'fs-extra';
-import {fullPackageExampleDir, fullPackageExampleFiles} from '../repo-paths';
-import {insertAllExamples, isCodeUpdated} from './example-inserter';
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import {describe, it} from 'node:test';
+import {fullPackageExampleDir, fullPackageExampleFiles} from '../repo-paths.js';
+import {generateAllExamples, isCodeUpdated} from './example-inserter.js';
 
-describe(insertAllExamples.name, () => {
+describe(generateAllExamples.name, () => {
     it('should inserts examples into markdown file with no code blocks', async () => {
-        const codeInsertedMarkdown = await insertAllExamples(
+        const codeInsertedMarkdown = await generateAllExamples(
             fullPackageExampleFiles.readme,
             fullPackageExampleDir,
             undefined,
@@ -13,7 +14,7 @@ describe(insertAllExamples.name, () => {
 
         const expectation = (await readFile(fullPackageExampleFiles.readmeExpectation)).toString();
 
-        expect(codeInsertedMarkdown).to.equal(expectation);
+        assert.strictEqual(codeInsertedMarkdown, expectation);
     });
 });
 
@@ -25,7 +26,7 @@ describe(isCodeUpdated.name, () => {
             undefined,
         );
 
-        assert.isFalse(updated);
+        assert.strictEqual(updated, false);
     });
 
     it('should read updated markdown as updated', async () => {
@@ -35,6 +36,6 @@ describe(isCodeUpdated.name, () => {
             undefined,
         );
 
-        assert.isTrue(updated);
+        assert.strictEqual(updated, true);
     });
 });

@@ -1,14 +1,15 @@
-import {expect} from 'chai';
+import assert from 'node:assert/strict';
+import {describe, it} from 'node:test';
 import type {Parent} from 'unist';
-import {noSourceCodeFiles} from '../repo-paths';
-import {parseHtmlContents, parseMarkdownFile} from './parse-markdown';
+import {noSourceCodeFiles} from '../repo-paths.js';
+import {parseHtmlContents, parseMarkdownFile} from './parse-markdown.js';
 
 describe('markdown parsing', () => {
     it('smoke test parsed node creation', async () => {
         const parsed = await parseMarkdownFile(noSourceCodeFiles.comment);
         // prevent excessive depth checking in nodes
         delete (parsed as Partial<Parent>).children;
-        expect(parsed as Partial<Parent>).to.deep.equal({
+        assert.deepStrictEqual(parsed as Partial<Parent>, {
             type: 'root',
             position: {
                 start: {
@@ -25,11 +26,11 @@ describe('markdown parsing', () => {
         });
     });
 
-    it('smoke test parsed node creation', async () => {
+    it('smoke test parsed node creation', () => {
         const parsed = parseHtmlContents(`<!-- comment is here -->`);
         // prevent excessive depth checking in nodes
         delete (parsed as Partial<Parent>).children;
-        expect(parsed as Partial<Parent>).to.deep.equal({
+        assert.deepStrictEqual(parsed as Partial<Parent>, {
             type: 'root',
             data: {
                 // idk what this means but it's in there

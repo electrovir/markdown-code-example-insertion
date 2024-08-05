@@ -1,7 +1,7 @@
-import {join} from 'path';
+import {join} from 'node:path';
 import {ParsedCommandLine} from 'typescript';
-import {readPackageDetails} from './parse-package-json';
-import {getTsDirs} from './parse-tsconfig';
+import {readPackageDetails} from './parse-package-json.js';
+import {getTsDirs} from './parse-tsconfig.js';
 
 export type PackageIndex = {
     replaceName: string | undefined;

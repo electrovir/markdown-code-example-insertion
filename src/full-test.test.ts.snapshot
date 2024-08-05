@@ -1,0 +1,39 @@
+exports[`cli.js > should produce correct output when a check fails 1`] = `
+{
+  "stdout": "Checking that code in markdown is up to date:\\n    README.expect.md: up to date\\n",
+  "stderr": "    README.md: NOT up to date\\nCode in Markdown file(s) is out of date. Run without --check to update.\\n",
+  "exitCode": 1
+}
+`;
+
+exports[`cli.js > should produce correct output when a check passes 1`] = `
+{
+  "stdout": "Checking that code in markdown is up to date:\\n    README.expect.md: up to date\\n",
+  "stderr": "",
+  "exitCode": 0
+}
+`;
+
+exports[`cli.js > supports forced index flag 1`] = `
+{
+  "stdout": "Checking that code in markdown is up to date:\\n    complete.md: up to date\\n",
+  "stderr": "",
+  "exitCode": 0
+}
+`;
+
+exports[`cli.js > supports forced index flag 2`] = `
+{
+  "stdout": "Inserting code into markdown:\\n    incomplete.md\\n",
+  "stderr": "",
+  "exitCode": 0
+}
+`;
+
+exports[`cli.js > supports forced index flag 3`] = `
+{
+  "stdout": "Checking that code in markdown is up to date:\\n",
+  "stderr": "    incomplete.md: NOT up to date\\nCode in Markdown file(s) is out of date. Run without --check to update.\\n",
+  "exitCode": 1
+}
+`;

@@ -1,7 +1,8 @@
-import {existsSync, readFile} from 'fs-extra';
-import {dirname, resolve} from 'path';
-import {CodeExampleFileMissingError} from '../errors/code-example-file-missing.error';
-import {CodeExampleLink} from '../parsing-markdown/extract-links';
+import {existsSync} from 'node:fs';
+import {readFile} from 'node:fs/promises';
+import {dirname, resolve} from 'node:path';
+import {CodeExampleFileMissingError} from '../errors/code-example-file-missing.error.js';
+import {CodeExampleLink} from '../parsing-markdown/extract-links.js';
 
 export function extractExamplePath(
     originalMarkdownFilePath: string,
@@ -20,7 +21,5 @@ export async function extractExampleCode(
     linkComment: CodeExampleLink,
 ) {
     const exampleCodePath = extractExamplePath(originalMarkdownFilePath, linkComment);
-    const exampleCode = await readFile(exampleCodePath);
-
-    return exampleCode;
+    return await readFile(exampleCodePath);
 }

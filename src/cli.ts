@@ -1,26 +1,42 @@
 #!/usr/bin/env node
 import {replaceWithWindowsPathIfNeeded} from '@augment-vir/node-js';
-import {existsSync} from 'fs';
-import {promise as glob} from 'glob-promise';
-import {relative, resolve} from 'path';
-import {createOrderedLogging} from './augments/console';
-import {MarkdownCodeExampleInserterError} from './errors/markdown-code-example-inserter.error';
-import {OutOfDateInsertedCodeError} from './errors/out-of-date-inserted-code.error';
-import {isCodeUpdated, writeAllExamples} from './example-inserter/example-inserter';
+import {glob} from 'glob';
+import {existsSync} from 'node:fs';
+import {relative, resolve} from 'node:path';
+import {fileURLToPath} from 'node:url';
+import {createOrderedLogging} from './augments/console.js';
+import {MarkdownCodeExampleInserterError} from './errors/markdown-code-example-inserter.error.js';
+import {OutOfDateInsertedCodeError} from './errors/out-of-date-inserted-code.error.js';
+import {isCodeUpdated, writeAllExamples} from './example-inserter/example-inserter.js';
 
+/**
+ * Flag for setting a specific index file.
+ *
+ * @category Internals
+ */
 export const forceIndexTrigger = '--index';
 const ignoreTrigger = '--ignore';
 const silentTrigger = '--silent';
 const checkOnlyTrigger = '--check';
 
-type CliInputs = {
+/**
+ * All args for the CLI. This is automatically generated inside of {@link cli} via {@link parseArgs}.
+ *
+ * @category Internals
+ */
+export type CliArgs = {
     forceIndex: string | undefined;
     silent: boolean;
     checkOnly: boolean;
     files: string[];
 };
 
-export async function parseArgs(args: string[]): Promise<CliInputs> {
+/**
+ * Parse all CLI args out of a raw CLI arg string.
+ *
+ * @category Internals
+ */
+export async function parseArgs(args: string[]): Promise<CliArgs> {
     let forceIndex: string | undefined = undefined;
     let silent = false;
     const inputFiles: string[] = [];
@@ -40,12 +56,12 @@ export async function parseArgs(args: string[]): Promise<CliInputs> {
             lastArgWasForceIndexTrigger = false;
         } else if (arg === ignoreTrigger) {
             lastArgWasIgnoreTrigger = true;
-        } else if (arg === checkOnlyTrigger) {
-            checkOnly = true;
         } else if (arg === checkOnlyTrigger && checkOnly) {
             throw new MarkdownCodeExampleInserterError(
                 `${checkOnlyTrigger} accidentally duplicated in your inputs`,
             );
+        } else if (arg === checkOnlyTrigger) {
+            checkOnly = true;
         } else if (lastArgWasIgnoreTrigger) {
             ignoreList.push(arg);
             lastArgWasIgnoreTrigger = false;
@@ -60,12 +76,13 @@ export async function parseArgs(args: string[]): Promise<CliInputs> {
     await Promise.all(
         globs.map(async (globString) => {
             const paths = await glob(globString, {
-                nodir: true,
-
                 ignore: [
                     ...ignoreList,
-                    './**/node_modules/**',
+                    '**/node_modules/**',
                 ],
+                nodir: true,
+                follow: true,
+                nocase: true,
             });
             if (paths.length) {
                 inputFiles.push(
@@ -87,6 +104,11 @@ export async function parseArgs(args: string[]): Promise<CliInputs> {
     };
 }
 
+/**
+ * Run the `md-code` CLI.
+ *
+ * @category Main
+ */
 export async function cli(rawArgs: string[], overrideDir?: string) {
     const args = await parseArgs(rawArgs);
     // console.log({args, rawArgs});
@@ -100,7 +122,7 @@ export async function cli(rawArgs: string[], overrideDir?: string) {
             console.info(`Inserting code into markdown:`);
         }
     }
-    const errors: MarkdownCodeExampleInserterError[] = [];
+    const errors: Error[] = [];
     const orderedLog = createOrderedLogging();
 
     await Promise.all(
@@ -150,7 +172,14 @@ export async function cli(rawArgs: string[], overrideDir?: string) {
         }),
     );
     if (errors.length) {
-        if (errors.every((error) => error instanceof OutOfDateInsertedCodeError)) {
+        if (
+            /** Weird necessary as cast to prevent TypeScript's over-exuberant type guarding. */
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+            (errors as Error[]).every(
+                (error): error is OutOfDateInsertedCodeError =>
+                    error instanceof OutOfDateInsertedCodeError,
+            )
+        ) {
             throw new OutOfDateInsertedCodeError(
                 'Code in Markdown file(s) is out of date. Run without --check to update.',
             );
@@ -165,7 +194,7 @@ function errorHasMessage(error: unknown): error is {message: string} {
     return 'message' in (error as any) && typeof (error as any).message === 'string';
 }
 
-if (require.main === module) {
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
     cli(process.argv.slice(2)).catch((error: unknown) => {
         if (errorHasMessage(error)) {
             console.error(error.message);

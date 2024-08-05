@@ -13,6 +13,5 @@ export function fixCodeIndents(rawCode: string, indent: string): string {
         }
     });
 
-    const joined = indented.join('\n');
-    return joined;
+    return indented.join('\n');
 }

@@ -1,13 +1,18 @@
-import {readFile, writeFile} from 'fs-extra';
-import {join} from 'path';
-import {extractLinks} from '../parsing-markdown/extract-links';
-import {fixCodeIndents} from './code-indent';
-import {extractExampleCode} from './extract-example';
-import {fixPackageImports} from './fix-package-imports';
-import {getFileLanguageName} from './get-file-language-name';
-import {insertCodeExample} from './insert-code';
+import {readFile, writeFile} from 'node:fs/promises';
+import {join} from 'node:path';
+import {extractLinks} from '../parsing-markdown/extract-links.js';
+import {fixCodeIndents} from './code-indent.js';
+import {extractExampleCode} from './extract-example.js';
+import {fixPackageImports} from './fix-package-imports.js';
+import {getFileLanguageName} from './get-file-language-name.js';
+import {insertCodeExample} from './insert-code.js';
 
-export async function insertAllExamples(
+/**
+ * Create a new string from the given markdown file with all code example links inserted.
+ *
+ * @category Internals
+ */
+export async function generateAllExamples(
     markdownPath: string,
     packageDir: string,
     forceIndexPath: string | undefined,
@@ -46,22 +51,32 @@ export async function insertAllExamples(
     return markdownContents;
 }
 
+/**
+ * Check if the given markdown file has all code examples updated.
+ *
+ * @category Main
+ */
 export async function isCodeUpdated(
     markdownPath: string,
     packageDir: string,
     forceIndexPath: string | undefined,
 ): Promise<boolean> {
     const oldText = (await readFile(markdownPath)).toString();
-    const newText = await insertAllExamples(markdownPath, packageDir, forceIndexPath);
+    const newText = await generateAllExamples(markdownPath, packageDir, forceIndexPath);
 
     return oldText === newText;
 }
 
+/**
+ * Overwrite the given markdown file with all code examples updated.
+ *
+ * @category Main
+ */
 export async function writeAllExamples(
     markdownPath: string,
     packageDir: string,
     forceIndexPath: string | undefined,
 ) {
-    const newText = await insertAllExamples(markdownPath, packageDir, forceIndexPath);
+    const newText = await generateAllExamples(markdownPath, packageDir, forceIndexPath);
     await writeFile(markdownPath, newText);
 }

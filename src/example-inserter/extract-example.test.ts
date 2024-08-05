@@ -1,8 +1,10 @@
-import {expect} from 'chai';
-import {CodeExampleFileMissingError} from '../errors/code-example-file-missing.error';
-import {CodeExampleLink} from '../parsing-markdown/extract-links';
-import {noSourceCodeFiles} from '../repo-paths';
-import {extractExamplePath} from './extract-example';
+import assert from 'node:assert/strict';
+import {describe, it} from 'node:test';
+import {assertThrows} from 'run-time-assertions';
+import {CodeExampleFileMissingError} from '../errors/code-example-file-missing.error.js';
+import {CodeExampleLink} from '../parsing-markdown/extract-links.js';
+import {noSourceCodeFiles} from '../repo-paths.js';
+import {extractExamplePath} from './extract-example.js';
 
 describe(extractExamplePath.name, () => {
     it('correctly checks links relative to the given markdown file', () => {
@@ -10,7 +12,7 @@ describe(extractExamplePath.name, () => {
             linkPath: 'comment.md',
         } as CodeExampleLink);
 
-        expect(paths).to.equal(noSourceCodeFiles.comment);
+        assert.strictEqual(paths, noSourceCodeFiles.comment);
     });
 
     it('correctly checks links relative to the given markdown file 2', () => {
@@ -18,14 +20,19 @@ describe(extractExamplePath.name, () => {
             linkPath: 'invalid-link-comments.md',
         } as CodeExampleLink);
 
-        expect(paths).to.equal(noSourceCodeFiles.invalidLinkComments);
+        assert.strictEqual(paths, noSourceCodeFiles.invalidLinkComments);
     });
 
     it('errors when files are missing', () => {
-        expect(() => {
-            extractExamplePath(noSourceCodeFiles.linkPaths, {
-                linkPath: 'this-does-not-exist',
-            } as CodeExampleLink);
-        }).throws(CodeExampleFileMissingError);
+        assertThrows(
+            () => {
+                extractExamplePath(noSourceCodeFiles.linkPaths, {
+                    linkPath: 'this-does-not-exist',
+                } as CodeExampleLink);
+            },
+            {
+                matchConstructor: CodeExampleFileMissingError,
+            },
+        );
     });
 });

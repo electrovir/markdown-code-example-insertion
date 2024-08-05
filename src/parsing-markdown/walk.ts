@@ -1,5 +1,5 @@
 import type {Node, Parent} from 'unist';
-import {isHtmlNode, parseHtmlNode} from './parse-markdown';
+import {isHtmlNode, parseHtmlNode} from './parse-markdown.js';
 
 export type WalkLanguages = 'markdown' | 'html';
 
@@ -20,6 +20,7 @@ export function walk(
     if (isHtmlNode(node)) {
         callback(node, 'markdown');
         const parsedHtmlNode = parseHtmlNode(node);
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         if (parsedHtmlNode.children) {
             return parsedHtmlNode.children.some((htmlChild) => {
                 return walk(htmlChild, 'html', callback);
