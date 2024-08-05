@@ -3,19 +3,19 @@ import {readFile, writeFile} from 'node:fs/promises';
 import {join} from 'node:path';
 import {describe, it} from 'node:test';
 import {assertThrows} from 'run-time-assertions';
-import {cli, parseArgs} from './cli.js';
 import {MarkdownCodeExampleInserterError} from './errors/markdown-code-example-inserter.error.js';
 import {OutOfDateInsertedCodeError} from './errors/out-of-date-inserted-code.error.js';
 import {fullPackageExampleDir, fullPackageExampleFiles} from './repo-paths.js';
+import {parseArgs, runCli} from './run-cli.js';
 
 describe(parseArgs.name, () => {
     it('no inputs results in no file paths', async () => {
-        const paths = (await parseArgs([])).files;
+        const paths = (await parseArgs([], '')).files;
         assert.deepStrictEqual(paths, []);
     });
 
     it('gets all .md files and ignores node_modules', async () => {
-        const paths = (await parseArgs(['./**/*.md'])).files;
+        const paths = (await parseArgs(['./**/*.md'], '')).files;
         assert.deepStrictEqual(paths, [
             'README.md',
             join('test-files', 'forced-index-example', 'complete.md'),
@@ -32,11 +32,14 @@ describe(parseArgs.name, () => {
 
     it('respects ignore list', async () => {
         const paths = (
-            await parseArgs([
-                './**/*.md',
-                '--ignore',
-                './test-files/**/*',
-            ])
+            await parseArgs(
+                [
+                    './**/*.md',
+                    '--ignore',
+                    './test-files/**/*',
+                ],
+                '',
+            )
         ).files;
         assert.deepStrictEqual(paths, [
             'README.md',
@@ -45,12 +48,12 @@ describe(parseArgs.name, () => {
     });
 
     it('works with raw file names', async () => {
-        const paths = (await parseArgs(['README.md'])).files;
+        const paths = (await parseArgs(['README.md'], '')).files;
         assert.deepStrictEqual(paths, ['README.md']);
     });
 
     it('works with simple glob', async () => {
-        const paths = (await parseArgs(['./*.md'])).files;
+        const paths = (await parseArgs(['./*.md'], '')).files;
         assert.deepStrictEqual(paths, [
             'README.md',
             'todo.md',
@@ -58,17 +61,17 @@ describe(parseArgs.name, () => {
     });
 });
 
-describe(cli.name, () => {
+describe(runCli.name, () => {
     it('cli works correctly on readme file', async () => {
         const originalFileContents = (await readFile(fullPackageExampleFiles.readme)).toString();
         try {
-            await cli(
-                [
+            await runCli({
+                rawArgs: [
                     fullPackageExampleFiles.readme,
                     '--silent',
                 ],
-                fullPackageExampleDir,
-            );
+                cwd: fullPackageExampleDir,
+            });
             const newFileContents = (await readFile(fullPackageExampleFiles.readme)).toString();
             assert.strictEqual(
                 newFileContents,
@@ -84,14 +87,14 @@ describe(cli.name, () => {
             await readFile(fullPackageExampleFiles.readmeExpectation)
         ).toString();
         try {
-            await cli(
-                [
+            await runCli({
+                rawArgs: [
                     fullPackageExampleFiles.readmeExpectation,
                     '--silent',
                     '--check',
                 ],
-                fullPackageExampleDir,
-            );
+                cwd: fullPackageExampleDir,
+            });
             const newFileContents = (
                 await readFile(fullPackageExampleFiles.readmeExpectation)
             ).toString();
@@ -112,14 +115,14 @@ describe(cli.name, () => {
     it('cli --check errors when not update to date', async () => {
         await assertThrows(
             () =>
-                cli(
-                    [
+                runCli({
+                    rawArgs: [
                         fullPackageExampleFiles.readme,
                         '--silent',
                         '--check',
                     ],
-                    fullPackageExampleDir,
-                ),
+                    cwd: fullPackageExampleDir,
+                }),
             {
                 matchConstructor: OutOfDateInsertedCodeError,
             },
@@ -127,18 +130,18 @@ describe(cli.name, () => {
     });
 
     it('cli --check does not error when code is up to date', async () => {
-        await cli(
-            [
+        await runCli({
+            rawArgs: [
                 fullPackageExampleFiles.readmeExpectation,
                 '--silent',
                 '--check',
             ],
-            fullPackageExampleDir,
-        );
+            cwd: fullPackageExampleDir,
+        });
     });
 
     it('cli errors when no arguments are given', async () => {
-        await assertThrows(() => cli([], fullPackageExampleDir), {
+        await assertThrows(() => runCli({rawArgs: [], cwd: fullPackageExampleDir}), {
             matchConstructor: MarkdownCodeExampleInserterError,
         });
     });

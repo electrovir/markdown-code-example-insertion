@@ -5,13 +5,13 @@ import {readFile, writeFile} from 'node:fs/promises';
 import {join, sep} from 'node:path';
 import {describe, it, TestContext} from 'node:test';
 import {isRunTimeType} from 'run-time-assertions';
-import {forceIndexTrigger} from './cli.js';
 import {
     forcedIndexExampleDir,
     fullPackageExampleDir,
     fullPackageExampleFiles,
     repoRootDir,
 } from './repo-paths.js';
+import {forceIndexTrigger} from './run-cli.js';
 
 async function runCli(
     context: TestContext,

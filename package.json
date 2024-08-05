@@ -1,6 +1,6 @@
 {
     "name": "markdown-code-example-inserter",
-    "version": "2.0.1",
+    "version": "2.0.2",
     "description": "Syncs code examples with markdown documentation.",
     "keywords": [
         "automatic",
@@ -51,6 +51,7 @@
     "dependencies": {
         "@augment-vir/common": "^29.3.0",
         "@augment-vir/node-js": "^29.3.0",
+        "cli-args-vir": "^0.0.3",
         "glob": "^11.0.0",
         "rehype-parse": "^9.0.0",
         "remark-parse": "^11.0.0",
