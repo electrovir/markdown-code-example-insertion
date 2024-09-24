@@ -55,8 +55,12 @@ function fixTypescriptImports(
     regExpSafePosixPath: string,
     replaceName: string,
 ): string {
+    const indexFileImportRegExpPath = regExpSafePosixPath.replace(
+        /\\\.\w+$/,
+        String.raw`(?:\.[cm]?[jt]s[x]?)?`,
+    );
     const indexFileImportRegExp = new RegExp(
-        `( from ['"\`])${regExpSafePosixPath.replace(/\\\.\w+$/, '')}(['"\`])`,
+        `( from ['"\`])${indexFileImportRegExpPath}(['"\`])`,
         'g',
     );
     const bareIndexDirImportRegExp = new RegExp(

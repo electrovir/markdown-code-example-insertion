@@ -27,6 +27,28 @@ describe(fixPackageImports.name, () => {
         assert.strictEquals(newCode, `import blah from 'derp';`);
     });
 
+    it('support index.js imports', async () => {
+        const newCode = await fixPackageImports(
+            `import blah from '../index.js';`,
+            join(noSourceCodeDir, 'src', 'readme-examples', 'derp.ts'),
+            join(noSourceCodeDir),
+            undefined,
+            'TypeScript',
+            {
+                options: {
+                    outDir: 'dist',
+                    rootDir: 'src',
+                },
+            },
+            {
+                name: 'derp',
+                main: 'dist/index.js',
+            },
+        );
+
+        assert.strictEquals(newCode, `import blah from 'derp';`);
+    });
+
     it('fix index file imports with file name', async () => {
         const newCode = await fixPackageImports(
             `import blah from '../index';`,
