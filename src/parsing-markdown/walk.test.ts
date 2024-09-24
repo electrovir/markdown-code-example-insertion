@@ -1,5 +1,5 @@
-import assert from 'node:assert/strict';
-import {describe, it} from 'node:test';
+import {assert} from '@augment-vir/assert';
+import {describe, it} from '@augment-vir/test';
 import type {Literal, Node, Parent, Position} from 'unist';
 import {noSourceCodeFiles} from '../repo-paths.js';
 import {parseHtmlContents, parseMarkdownContents, parseMarkdownFile} from './parse-markdown.js';
@@ -17,7 +17,7 @@ describe(walk.name, () => {
             nodeTypes.push(`${node.type}:${language}`);
         });
 
-        assert.deepStrictEqual(nodeTypes, [
+        assert.deepEquals(nodeTypes, [
             'root:markdown',
             'heading:markdown',
             'text:markdown',
@@ -39,7 +39,7 @@ describe(walk.name, () => {
             nodeTypes.push(`${node.type}:${language}`);
         });
 
-        assert.deepStrictEqual(nodeTypes, [
+        assert.deepEquals(nodeTypes, [
             'root:markdown',
             'heading:markdown',
             'text:markdown',
@@ -75,7 +75,7 @@ describe(walk.name, () => {
             },
         );
 
-        assert.deepStrictEqual(positions, [
+        assert.deepEquals(positions, [
             {
                 type: 'root',
                 value: undefined,
@@ -211,7 +211,7 @@ describe(walk.name, () => {
             },
         );
 
-        assert.deepStrictEqual(nodeTypes, [
+        assert.deepEquals(nodeTypes, [
             'root:html',
             'element:html',
             'text:html',
@@ -228,7 +228,7 @@ describe(walk.name, () => {
             nodeTypes.push(`${node.type}:${language}`);
         });
 
-        assert.deepStrictEqual(nodeTypes, [
+        assert.deepEquals(nodeTypes, [
             'root:html',
             'comment:html',
         ]);
@@ -248,7 +248,7 @@ describe(walk.name, () => {
             }
         });
 
-        assert.deepStrictEqual(positions, [
+        assert.deepEquals(positions, [
             {
                 type: 'text',
                 value: 'honda',

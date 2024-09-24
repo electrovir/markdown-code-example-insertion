@@ -1,6 +1,6 @@
-import assert from 'node:assert/strict';
+import {assert} from '@augment-vir/assert';
+import {describe, it} from '@augment-vir/test';
 import {readFile} from 'node:fs/promises';
-import {describe, it} from 'node:test';
 import {fullPackageExampleDir, fullPackageExampleFiles} from '../repo-paths.js';
 import {generateAllExamples, isCodeUpdated} from './example-inserter.js';
 
@@ -14,7 +14,7 @@ describe(generateAllExamples.name, () => {
 
         const expectation = (await readFile(fullPackageExampleFiles.readmeExpectation)).toString();
 
-        assert.strictEqual(codeInsertedMarkdown, expectation);
+        assert.strictEquals(codeInsertedMarkdown, expectation);
     });
 });
 
@@ -26,7 +26,7 @@ describe(isCodeUpdated.name, () => {
             undefined,
         );
 
-        assert.strictEqual(updated, false);
+        assert.strictEquals(updated, false);
     });
 
     it('should read updated markdown as updated', async () => {
@@ -36,6 +36,6 @@ describe(isCodeUpdated.name, () => {
             undefined,
         );
 
-        assert.strictEqual(updated, true);
+        assert.strictEquals(updated, true);
     });
 });

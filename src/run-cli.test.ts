@@ -1,8 +1,7 @@
-import assert from 'node:assert/strict';
+import {assert} from '@augment-vir/assert';
+import {describe, it} from '@augment-vir/test';
 import {readFile, writeFile} from 'node:fs/promises';
 import {join} from 'node:path';
-import {describe, it} from 'node:test';
-import {assertThrows} from 'run-time-assertions';
 import {MarkdownCodeExampleInserterError} from './errors/markdown-code-example-inserter.error.js';
 import {OutOfDateInsertedCodeError} from './errors/out-of-date-inserted-code.error.js';
 import {fullPackageExampleDir, fullPackageExampleFiles} from './repo-paths.js';
@@ -11,12 +10,12 @@ import {parseArgs, runCli} from './run-cli.js';
 describe(parseArgs.name, () => {
     it('no inputs results in no file paths', async () => {
         const paths = (await parseArgs([], '')).files;
-        assert.deepStrictEqual(paths, []);
+        assert.deepEquals(paths, []);
     });
 
     it('gets all .md files and ignores node_modules', async () => {
         const paths = (await parseArgs(['./**/*.md'], '')).files;
-        assert.deepStrictEqual(paths, [
+        assert.deepEquals(paths, [
             'README.md',
             join('test-files', 'forced-index-example', 'complete.md'),
             join('test-files', 'forced-index-example', 'incomplete.md'),
@@ -41,7 +40,7 @@ describe(parseArgs.name, () => {
                 '',
             )
         ).files;
-        assert.deepStrictEqual(paths, [
+        assert.deepEquals(paths, [
             'README.md',
             'todo.md',
         ]);
@@ -49,12 +48,12 @@ describe(parseArgs.name, () => {
 
     it('works with raw file names', async () => {
         const paths = (await parseArgs(['README.md'], '')).files;
-        assert.deepStrictEqual(paths, ['README.md']);
+        assert.deepEquals(paths, ['README.md']);
     });
 
     it('works with simple glob', async () => {
         const paths = (await parseArgs(['./*.md'], '')).files;
-        assert.deepStrictEqual(paths, [
+        assert.deepEquals(paths, [
             'README.md',
             'todo.md',
         ]);
@@ -73,7 +72,7 @@ describe(runCli.name, () => {
                 cwd: fullPackageExampleDir,
             });
             const newFileContents = (await readFile(fullPackageExampleFiles.readme)).toString();
-            assert.strictEqual(
+            assert.strictEquals(
                 newFileContents,
                 (await readFile(fullPackageExampleFiles.readmeExpectation)).toString(),
             );
@@ -98,7 +97,7 @@ describe(runCli.name, () => {
             const newFileContents = (
                 await readFile(fullPackageExampleFiles.readmeExpectation)
             ).toString();
-            assert.strictEqual(
+            assert.strictEquals(
                 newFileContents,
                 (await readFile(fullPackageExampleFiles.readmeExpectation)).toString(),
             );
@@ -113,7 +112,7 @@ describe(runCli.name, () => {
     });
 
     it('cli --check errors when not update to date', async () => {
-        await assertThrows(
+        await assert.throws(
             () =>
                 runCli({
                     rawArgs: [
@@ -141,7 +140,7 @@ describe(runCli.name, () => {
     });
 
     it('cli errors when no arguments are given', async () => {
-        await assertThrows(() => runCli({rawArgs: [], cwd: fullPackageExampleDir}), {
+        await assert.throws(() => runCli({rawArgs: [], cwd: fullPackageExampleDir}), {
             matchConstructor: MarkdownCodeExampleInserterError,
         });
     });

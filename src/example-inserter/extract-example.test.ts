@@ -1,6 +1,5 @@
-import assert from 'node:assert/strict';
-import {describe, it} from 'node:test';
-import {assertThrows} from 'run-time-assertions';
+import {assert} from '@augment-vir/assert';
+import {describe, it} from '@augment-vir/test';
 import {CodeExampleFileMissingError} from '../errors/code-example-file-missing.error.js';
 import {CodeExampleLink} from '../parsing-markdown/extract-links.js';
 import {noSourceCodeFiles} from '../repo-paths.js';
@@ -12,7 +11,7 @@ describe(extractExamplePath.name, () => {
             linkPath: 'comment.md',
         } as CodeExampleLink);
 
-        assert.strictEqual(paths, noSourceCodeFiles.comment);
+        assert.strictEquals(paths, noSourceCodeFiles.comment);
     });
 
     it('correctly checks links relative to the given markdown file 2', () => {
@@ -20,11 +19,11 @@ describe(extractExamplePath.name, () => {
             linkPath: 'invalid-link-comments.md',
         } as CodeExampleLink);
 
-        assert.strictEqual(paths, noSourceCodeFiles.invalidLinkComments);
+        assert.strictEquals(paths, noSourceCodeFiles.invalidLinkComments);
     });
 
     it('errors when files are missing', () => {
-        assertThrows(
+        assert.throws(
             () => {
                 extractExamplePath(noSourceCodeFiles.linkPaths, {
                     linkPath: 'this-does-not-exist',

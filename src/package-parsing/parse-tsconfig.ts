@@ -1,4 +1,4 @@
-import {replaceWithWindowsPathIfNeeded} from '@augment-vir/node-js';
+import {replaceWithWindowsPathIfNeeded} from '@augment-vir/node';
 import {existsSync} from 'node:fs';
 import {join} from 'node:path';
 import {ParsedCommandLine, parseJsonConfigFileContent, readConfigFile, sys} from 'typescript';

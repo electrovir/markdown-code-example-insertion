@@ -1,6 +1,6 @@
-import assert from 'node:assert/strict';
+import {assert} from '@augment-vir/assert';
+import {describe, it} from '@augment-vir/test';
 import {join} from 'node:path';
-import {describe, it} from 'node:test';
 import {noSourceCodeDir} from '../repo-paths.js';
 import {fixPackageImports} from './fix-package-imports.js';
 
@@ -10,8 +10,8 @@ describe(fixPackageImports.name, () => {
             `import blah from '../';`,
             join(noSourceCodeDir, 'src', 'readme-examples', 'derp.ts'),
             join(noSourceCodeDir),
-            'TypeScript',
             undefined,
+            'TypeScript',
             {
                 options: {
                     outDir: 'dist',
@@ -24,7 +24,7 @@ describe(fixPackageImports.name, () => {
             },
         );
 
-        assert.strictEqual(newCode, `import blah from 'derp';`);
+        assert.strictEquals(newCode, `import blah from 'derp';`);
     });
 
     it('fix index file imports with file name', async () => {
@@ -32,8 +32,8 @@ describe(fixPackageImports.name, () => {
             `import blah from '../index';`,
             join(noSourceCodeDir, 'src', 'readme-examples', 'derp.ts'),
             join(noSourceCodeDir),
-            'TypeScript',
             undefined,
+            'TypeScript',
             {
                 options: {
                     outDir: 'dist',
@@ -46,7 +46,7 @@ describe(fixPackageImports.name, () => {
             },
         );
 
-        assert.strictEqual(newCode, `import blah from 'derp';`);
+        assert.strictEquals(newCode, `import blah from 'derp';`);
     });
 
     it('fix index file imports no trailing slash', async () => {
@@ -54,8 +54,8 @@ describe(fixPackageImports.name, () => {
             `import blah from '..';`,
             join(noSourceCodeDir, 'src', 'readme-examples', 'derp.ts'),
             join(noSourceCodeDir),
-            'TypeScript',
             undefined,
+            'TypeScript',
             {
                 options: {
                     outDir: 'dist',
@@ -68,7 +68,7 @@ describe(fixPackageImports.name, () => {
             },
         );
 
-        assert.strictEqual(newCode, `import blah from 'derp';`);
+        assert.strictEquals(newCode, `import blah from 'derp';`);
     });
 
     it('fix index file imports and nothing else', async () => {
@@ -77,8 +77,8 @@ describe(fixPackageImports.name, () => {
                     const thingie = ['yo hi there', 'hello to you too'];`,
             join(noSourceCodeDir, 'src', 'readme-examples', 'derp.ts'),
             join(noSourceCodeDir),
-            'TypeScript',
             undefined,
+            'TypeScript',
             {
                 options: {
                     outDir: 'dist',
@@ -91,7 +91,7 @@ describe(fixPackageImports.name, () => {
             },
         );
 
-        assert.strictEqual(
+        assert.strictEquals(
             newCode,
             `import blah from 'derp';
                     const thingie = ['yo hi there', 'hello to you too'];`,

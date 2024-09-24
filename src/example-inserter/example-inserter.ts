@@ -19,9 +19,7 @@ export async function generateAllExamples(
 ): Promise<string> {
     let markdownContents = (await readFile(markdownPath)).toString();
 
-    const linkComments = extractLinks(markdownContents);
-
-    await linkComments
+    await extractLinks(markdownContents)
         .sort((a, b) => a.node.position.end.offset - b.node.position.end.offset)
         /**
          * Reverse the array so that we're working from the bottom of the file upwards so we don't
@@ -36,8 +34,8 @@ export async function generateAllExamples(
                 originalCode,
                 join(packageDir, linkComment.linkPath),
                 packageDir,
-                language,
                 forceIndexPath,
+                language,
             );
             const indentFixedCode = fixCodeIndents(importFixedCode, linkComment.indent);
             markdownContents = insertCodeExample(

@@ -1,6 +1,6 @@
-import assert from 'node:assert/strict';
+import {assert} from '@augment-vir/assert';
+import {describe, it} from '@augment-vir/test';
 import {join} from 'node:path';
-import {describe, it} from 'node:test';
 import {extendingTsConfigDir, extendingTsConfigFiles, noSourceCodeDir} from '../repo-paths.js';
 import {guessPackageIndex} from './package-index.js';
 
@@ -8,7 +8,7 @@ describe(guessPackageIndex.name, () => {
     it('resolves to index.ts', async () => {
         const guessedIndex = await guessPackageIndex(extendingTsConfigDir);
 
-        assert.deepStrictEqual(guessedIndex, {
+        assert.deepEquals(guessedIndex, {
             replaceName: 'extending-ts-config',
             indexPath: join(extendingTsConfigFiles.sourceDir, 'index.ts'),
         });
@@ -21,7 +21,7 @@ describe(guessPackageIndex.name, () => {
             {name: 'test-name', main: 'blah/index.js'},
         );
 
-        assert.deepStrictEqual(guessedIndex, {
+        assert.deepEquals(guessedIndex, {
             replaceName: 'test-name',
             indexPath: join(noSourceCodeDir, 'index.ts'),
         });
@@ -42,7 +42,7 @@ describe(guessPackageIndex.name, () => {
             },
         );
 
-        assert.deepStrictEqual(guessedIndex, {
+        assert.deepEquals(guessedIndex, {
             replaceName: 'test-name',
             indexPath: join(noSourceCodeDir, 'src', 'index.ts'),
         });
@@ -55,7 +55,7 @@ describe(guessPackageIndex.name, () => {
             {name: 'test-name', main: 'blah/index.js'},
         );
 
-        assert.deepStrictEqual(guessedIndex, {
+        assert.deepEquals(guessedIndex, {
             replaceName: 'test-name',
             indexPath: join(noSourceCodeDir, 'blah', 'index.ts'),
         });
@@ -68,7 +68,7 @@ describe(guessPackageIndex.name, () => {
             {name: 'test-name', main: 'blah/index.js'},
         );
 
-        assert.deepStrictEqual(guessedIndex, {
+        assert.deepEquals(guessedIndex, {
             replaceName: 'test-name',
             indexPath: join(noSourceCodeDir, 'blah', 'index.ts'),
         });
@@ -80,7 +80,7 @@ describe(guessPackageIndex.name, () => {
             main: 'blah/index.js',
         });
 
-        assert.deepStrictEqual(guessedIndex, {
+        assert.deepEquals(guessedIndex, {
             replaceName: 'test-name',
             indexPath: join(noSourceCodeDir, 'blah', 'index.js'),
         });
@@ -92,7 +92,7 @@ describe(guessPackageIndex.name, () => {
             main: undefined,
         });
 
-        assert.deepStrictEqual(guessedIndex, {
+        assert.deepEquals(guessedIndex, {
             replaceName: 'test-name',
             indexPath: noSourceCodeDir,
         });

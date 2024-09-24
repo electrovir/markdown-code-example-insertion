@@ -1,5 +1,5 @@
-import assert from 'node:assert/strict';
-import {describe, it} from 'node:test';
+import {assert} from '@augment-vir/assert';
+import {describe, it} from '@augment-vir/test';
 import type {Parent} from 'unist';
 import {noSourceCodeFiles} from '../repo-paths.js';
 import {parseHtmlContents, parseMarkdownFile} from './parse-markdown.js';
@@ -9,7 +9,7 @@ describe('markdown parsing', () => {
         const parsed = await parseMarkdownFile(noSourceCodeFiles.comment);
         // prevent excessive depth checking in nodes
         delete (parsed as Partial<Parent>).children;
-        assert.deepStrictEqual(parsed as Partial<Parent>, {
+        assert.deepEquals(parsed as Partial<Parent>, {
             type: 'root',
             position: {
                 start: {
@@ -30,7 +30,7 @@ describe('markdown parsing', () => {
         const parsed = parseHtmlContents(`<!-- comment is here -->`);
         // prevent excessive depth checking in nodes
         delete (parsed as Partial<Parent>).children;
-        assert.deepStrictEqual(parsed as Partial<Parent>, {
+        assert.deepEquals(parsed as Partial<Parent>, {
             type: 'root',
             data: {
                 // idk what this means but it's in there

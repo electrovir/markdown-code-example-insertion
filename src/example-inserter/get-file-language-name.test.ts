@@ -1,10 +1,10 @@
-import assert from 'node:assert/strict';
-import {describe, it} from 'node:test';
+import {assert} from '@augment-vir/assert';
+import {describe, it} from '@augment-vir/test';
 import {getFileLanguageName} from './get-file-language-name.js';
 
 describe(getFileLanguageName.name, () => {
     it('gets correct file name for common file extensions', () => {
-        assert.deepStrictEqual(
+        assert.deepEquals(
             [
                 'index.js',
                 'index.ts',

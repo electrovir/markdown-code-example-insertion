@@ -1,13 +1,13 @@
-import assert from 'node:assert/strict';
+import {assert} from '@augment-vir/assert';
+import {describe, it} from '@augment-vir/test';
 import {readFile} from 'node:fs/promises';
-import {describe, it} from 'node:test';
 import {MarkdownCodeExampleInserterError} from '../errors/markdown-code-example-inserter.error.js';
 import {noSourceCodeFiles} from '../repo-paths.js';
 import {linkCommentTriggerPhrase} from '../trigger-phrase.js';
 import {FullyPositionedNode, extractIndent, extractLinks} from './extract-links.js';
 
 describe(extractLinks.name, () => {
-    const expectedLinks: Readonly<string[]> = [
+    const expectedLinks: string[] = [
         'up here',
         'and down here',
     ] as const;
@@ -24,12 +24,12 @@ describe(extractLinks.name, () => {
             ].join(' '),
         );
 
-        assert.deepStrictEqual(joinedLinks, expectation);
+        assert.deepEquals(joinedLinks, expectation);
     });
 
     it('exclude trigger phrase in linkPath property', async () => {
         const links = extractLinks(await readFile(noSourceCodeFiles.invalidLinkComments));
-        assert.deepStrictEqual(
+        assert.deepEquals(
             links.map((link) => link.linkPath.trim()),
             expectedLinks,
         );
@@ -37,7 +37,7 @@ describe(extractLinks.name, () => {
 
     it('no links are extracted when no comments contain the trigger phrase', async () => {
         const links = extractLinks(await readFile(noSourceCodeFiles.comment));
-        assert.deepStrictEqual(
+        assert.deepEquals(
             links.map((link) => link.linkPath.trim()),
             [],
         );
@@ -49,7 +49,7 @@ describe(extractLinks.name, () => {
         if (links.length !== 1 || !firstLink) {
             throw new MarkdownCodeExampleInserterError(`Wrong links extracted`);
         }
-        assert.deepStrictEqual(
+        assert.deepEquals(
             [
                 firstLink.node,
                 firstLink.linkedCodeBlock,
@@ -102,7 +102,7 @@ describe(extractLinks.name, () => {
             throw new MarkdownCodeExampleInserterError(`Wrong links extracted`);
         }
 
-        assert.strictEqual(firstLink.node.position.end.line, 2);
+        assert.strictEquals(firstLink.node.position.end.line, 2);
     });
 });
 
@@ -113,7 +113,7 @@ describe(extractIndent.name, () => {
             position: {start: {column: 4}},
         } as {value: unknown} & FullyPositionedNode);
 
-        assert.strictEqual(indent, '');
+        assert.strictEquals(indent, '');
     });
 
     it('extracts leading spaces when line starts with the node', () => {
@@ -122,7 +122,7 @@ describe(extractIndent.name, () => {
             position: {start: {column: 5}},
         } as {value: unknown} & FullyPositionedNode);
 
-        assert.strictEqual(indent, '    ');
+        assert.strictEquals(indent, '    ');
     });
 
     it('extracts leading tabs when line starts with the node', () => {
@@ -131,6 +131,6 @@ describe(extractIndent.name, () => {
             position: {start: {column: 5}},
         } as {value: unknown} & FullyPositionedNode);
 
-        assert.strictEqual(indent, '\t\t\t\t');
+        assert.strictEquals(indent, '\t\t\t\t');
     });
 });

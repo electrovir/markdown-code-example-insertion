@@ -1,5 +1,5 @@
-import assert from 'node:assert/strict';
-import {describe, it} from 'node:test';
+import {assert} from '@augment-vir/assert';
+import {describe, it} from '@augment-vir/test';
 import {CodeExampleLink} from '../parsing-markdown/extract-links.js';
 import {insertCodeExample, insertText, replaceTextRange} from './insert-code.js';
 
@@ -14,7 +14,7 @@ describe(replaceTextRange.name, () => {
             'insertion',
         );
 
-        assert.strictEqual(replacedLines, 'a b insertion e');
+        assert.strictEquals(replacedLines, 'a b insertion e');
     });
 
     it('replaces at the beginning of the string', () => {
@@ -27,7 +27,7 @@ describe(replaceTextRange.name, () => {
             'insertion',
         );
 
-        assert.strictEqual(replacedLines, 'insertion d e');
+        assert.strictEquals(replacedLines, 'insertion d e');
     });
 
     it('replaces at the end of the string', () => {
@@ -40,7 +40,7 @@ describe(replaceTextRange.name, () => {
             'insertion',
         );
 
-        assert.strictEqual(replacedLines, 'a b c d insertion');
+        assert.strictEquals(replacedLines, 'a b c d insertion');
     });
 });
 
@@ -48,19 +48,19 @@ describe(insertText.name, () => {
     it('inserts into the middle of a string', () => {
         const replacedLines = insertText('a b c d e', 8, 'insertion ');
 
-        assert.strictEqual(replacedLines, 'a b c d insertion e');
+        assert.strictEquals(replacedLines, 'a b c d insertion e');
     });
 
     it('inserts after the beginning of a string', () => {
         const replacedLines = insertText('a b c d e', 0, 'insertion ');
 
-        assert.strictEqual(replacedLines, 'insertion a b c d e');
+        assert.strictEquals(replacedLines, 'insertion a b c d e');
     });
 
     it('inserts at the end of a string', () => {
         const replacedLines = insertText('a b c d e', 9, ' insertion');
 
-        assert.strictEqual(replacedLines, 'a b c d e insertion');
+        assert.strictEquals(replacedLines, 'a b c d e insertion');
     });
 });
 
@@ -81,7 +81,7 @@ describe(insertCodeExample.name, () => {
             } as Readonly<CodeExampleLink>,
         );
 
-        assert.strictEqual(
+        assert.strictEquals(
             replacedLines,
             "a\n\nlinked comment here\n\n```TypeScript\nconsole.info('derp');\n```\n\nc\n\nd\n\ne",
         );
@@ -109,7 +109,7 @@ describe(insertCodeExample.name, () => {
             } as Readonly<CodeExampleLink>,
         );
 
-        assert.strictEqual(
+        assert.strictEquals(
             replacedLines,
             "a\n\nlinked comment here\n\n```TypeScript\nconsole.info('derp');\n```\n\nb\n\nc",
         );

@@ -1,10 +1,9 @@
-import {addSuffix, mapObjectValues, removeColor} from '@augment-vir/common';
-import {interpolationSafeWindowsPath, runShellCommand, ShellOutput} from '@augment-vir/node-js';
-import assert from 'node:assert/strict';
+import {assert, check} from '@augment-vir/assert';
+import {addSuffix, mapObjectValues, removeColor, RuntimeEnv} from '@augment-vir/common';
+import {interpolationSafeWindowsPath, runShellCommand, ShellOutput} from '@augment-vir/node';
+import {assertTestContext, describe, it, UniversalTestContext} from '@augment-vir/test';
 import {readFile, writeFile} from 'node:fs/promises';
 import {join, sep} from 'node:path';
-import {describe, it, TestContext} from 'node:test';
-import {isRunTimeType} from 'run-time-assertions';
 import {
     forcedIndexExampleDir,
     fullPackageExampleDir,
@@ -14,7 +13,7 @@ import {
 import {forceIndexTrigger} from './run-cli.js';
 
 async function runCli(
-    context: TestContext,
+    context: UniversalTestContext,
     {
         args,
         dir,
@@ -36,10 +35,11 @@ async function runCli(
     delete result.error;
     delete result.exitSignal;
 
-    // @ts-expect-error: this type isn't included in @types/node yet
+    assertTestContext(context, RuntimeEnv.Node);
+
     context.assert.snapshot(
         mapObjectValues(result, (key, value) => {
-            if (isRunTimeType(value, 'string')) {
+            if (check.isString(value)) {
                 return removeColor(value).replaceAll(
                     addSuffix({value: repoRootDir, suffix: sep}),
                     '',
@@ -51,9 +51,9 @@ async function runCli(
     );
 
     if (shouldPass) {
-        assert.strictEqual(result.exitCode, 0, 'command should have passed');
+        assert.strictEquals(result.exitCode, 0, 'command should have passed');
     } else {
-        assert.notStrictEqual(result.exitCode, 0, 'command should have failed');
+        assert.notStrictEquals(result.exitCode, 0, 'command should have failed');
     }
 }
 
@@ -116,7 +116,7 @@ describe('cli.js', () => {
                 await readFile(incompleteMarkdownPath)
             ).toString();
 
-            assert.strictEqual(incompleteContentsAfterFixing, completeContents);
+            assert.strictEquals(incompleteContentsAfterFixing, completeContents);
         } finally {
             await writeFile(incompleteMarkdownPath, incompleteContentsBeforeFixing);
 

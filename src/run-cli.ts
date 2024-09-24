@@ -1,4 +1,4 @@
-import {replaceWithWindowsPathIfNeeded} from '@augment-vir/node-js';
+import {replaceWithWindowsPathIfNeeded} from '@augment-vir/node';
 import {extractRelevantArgs} from 'cli-args-vir';
 import {glob} from 'glob';
 import {existsSync} from 'node:fs';
@@ -129,7 +129,6 @@ export async function runCli({
     cliFilePath?: string;
 }>) {
     const args = await parseArgs(rawArgs, cliFilePath);
-    // console.log({args, rawArgs});
     if (!args.files.length) {
         throw new MarkdownCodeExampleInserterError('No markdown files given to insert code into.');
     }

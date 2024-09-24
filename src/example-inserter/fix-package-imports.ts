@@ -1,4 +1,4 @@
-import {getSystemRootPath, toPosixPath} from '@augment-vir/node-js';
+import {systemRootPath, toPosixPath} from '@augment-vir/node';
 import {dirname, join, posix, relative} from 'node:path';
 import {ParsedCommandLine} from 'typescript';
 import {guessPackageIndex} from '../package-parsing/package-index.js';
@@ -14,8 +14,8 @@ export async function fixPackageImports(
     codeExample: string,
     codePath: string,
     packageDir: string,
-    language: LanguageName = 'TypeScript',
     forceIndexPath: string | undefined,
+    language: LanguageName = 'TypeScript',
     /** For testing purposes. */
     overrideTsConfig?: Partial<ParsedCommandLine>,
     /** For testing purposes. */
@@ -27,7 +27,7 @@ export async function fixPackageImports(
     // fix imports
     if (packageIndex.replaceName) {
         const forceIndexFullPath = forceIndexPath
-            ? forceIndexPath.startsWith(getSystemRootPath())
+            ? forceIndexPath.startsWith(systemRootPath)
                 ? forceIndexPath
                 : join(packageDir, forceIndexPath)
             : '';

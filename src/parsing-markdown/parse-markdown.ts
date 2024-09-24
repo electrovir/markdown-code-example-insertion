@@ -1,5 +1,5 @@
 import type {Comment, Root as HtmlRoot} from 'hast';
-import type {Code, HTML, Root as MarkdownRoot} from 'mdast';
+import type {Code, Html, Root as MarkdownRoot} from 'mdast';
 import {readFile} from 'node:fs/promises';
 import rehypeParse from 'rehype-parse';
 import remarkParse from 'remark-parse';
@@ -27,7 +27,7 @@ export function isCodeBlock(input: Node): input is Code {
     return input.type === 'code';
 }
 
-export function isHtmlNode(input: Node): input is HTML {
+export function isHtmlNode(input: Node): input is Html {
     return input.type === 'html';
 }
 
@@ -35,6 +35,6 @@ export function parseHtmlContents(htmlContents: string): HtmlRoot {
     return htmlParser.parse(htmlContents);
 }
 
-export function parseHtmlNode(htmlNode: HTML): HtmlRoot {
+export function parseHtmlNode(htmlNode: Html): HtmlRoot {
     return parseHtmlContents(htmlNode.value);
 }

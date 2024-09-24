@@ -1,5 +1,5 @@
 import type {Comment} from 'hast';
-import type {Code, HTML} from 'mdast';
+import type {Code, Html} from 'mdast';
 import type {Node, Point, Position} from 'unist';
 import {InvalidNodeError} from '../errors/invalid-node.error.js';
 import {linkCommentTriggerPhrase, startsWithTriggerPhraseRegExp} from '../trigger-phrase.js';
@@ -57,7 +57,7 @@ export function extractLinks(
     }[] = [];
 
     let lastNode: Node | undefined;
-    let lastHtmlNode: {htmlNode: HTML & FullyPositionedNode; indent: string} | undefined;
+    let lastHtmlNode: {htmlNode: Html & FullyPositionedNode; indent: string} | undefined;
 
     walk(parsedRoot, 'markdown', (node, language) => {
         const lastComment = commentData[commentData.length - 1];
@@ -72,7 +72,7 @@ export function extractLinks(
             if (!htmlLine) {
                 throw new InvalidNodeError(
                     node,
-                    `this HTML node's position.start.line is not actually a valid line number from the file it's in`,
+                    `this Html node's position.start.line is not actually a valid line number from the file it's in`,
                 );
             }
             lastHtmlNode = {
@@ -139,7 +139,7 @@ function offsetNodePosition<T extends Node>(
     };
 }
 
-function isHtmlNode(input: Node): input is HTML {
+function isHtmlNode(input: Node): input is Html {
     return input.type === 'html';
 }
 
