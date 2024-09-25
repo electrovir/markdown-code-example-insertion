@@ -1,4 +1,5 @@
-#!/usr/bin/env node
+#!/usr/bin/env -S npx tsx
+
 import {runCli} from './run-cli.js';
 
 function errorHasMessage(error: unknown): error is {message: string} {
