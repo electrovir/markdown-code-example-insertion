@@ -3,14 +3,14 @@ import {addSuffix, mapObjectValues, removeColor, RuntimeEnv} from '@augment-vir/
 import {interpolationSafeWindowsPath, runShellCommand, ShellOutput} from '@augment-vir/node';
 import {assertTestContext, describe, it, UniversalTestContext} from '@augment-vir/test';
 import {readFile, writeFile} from 'node:fs/promises';
-import {join, sep} from 'node:path';
+import {join, resolve, sep} from 'node:path';
+import {forceIndexTrigger} from './cli/run-cli.js';
 import {
     forcedIndexExampleDir,
     fullPackageExampleDir,
     fullPackageExampleFiles,
     repoRootDir,
 } from './repo-paths.js';
-import {forceIndexTrigger} from './run-cli.js';
 
 async function runCli(
     context: UniversalTestContext,
@@ -25,8 +25,8 @@ async function runCli(
         shouldPass: boolean;
     },
 ) {
-    const cliBinPath = join(process.cwd(), 'dist', 'cli.js');
-    const commandToRun = interpolationSafeWindowsPath(`node ${cliBinPath} ${args.join(' ')}`);
+    const cliBinPath = resolve(import.meta.dirname, '..', 'bin.sh');
+    const commandToRun = interpolationSafeWindowsPath(`bash ${cliBinPath} ${args.join(' ')}`);
 
     const result: Partial<ShellOutput> = await runShellCommand(commandToRun, {
         cwd: dir,

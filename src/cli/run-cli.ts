@@ -3,10 +3,10 @@ import {extractRelevantArgs} from 'cli-args-vir';
 import {glob} from 'glob';
 import {existsSync} from 'node:fs';
 import {relative, resolve} from 'node:path';
-import {createOrderedLogging} from './augments/console.js';
-import {MarkdownCodeExampleInserterError} from './errors/markdown-code-example-inserter.error.js';
-import {OutOfDateInsertedCodeError} from './errors/out-of-date-inserted-code.error.js';
-import {isCodeUpdated, writeAllExamples} from './example-inserter/example-inserter.js';
+import {createOrderedLogging} from '../augments/console.js';
+import {MarkdownCodeExampleInserterError} from '../errors/markdown-code-example-inserter.error.js';
+import {OutOfDateInsertedCodeError} from '../errors/out-of-date-inserted-code.error.js';
+import {isCodeUpdated, writeAllExamples} from '../example-inserter/example-inserter.js';
 
 /**
  * Flag for setting a specific index file.
