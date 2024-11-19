@@ -25,8 +25,8 @@ async function runCli(
         shouldPass: boolean;
     },
 ) {
-    const cliBinPath = resolve(import.meta.dirname, '..', 'bin.sh');
-    const commandToRun = interpolationSafeWindowsPath(`bash ${cliBinPath} ${args.join(' ')}`);
+    const cliBinPath = resolve(import.meta.dirname, '..', 'bin.js');
+    const commandToRun = interpolationSafeWindowsPath(`node ${cliBinPath} ${args.join(' ')}`);
 
     const result: Partial<ShellOutput> = await runShellCommand(commandToRun, {
         cwd: dir,

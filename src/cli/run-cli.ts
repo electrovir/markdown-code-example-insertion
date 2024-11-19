@@ -1,5 +1,4 @@
-import {replaceWithWindowsPathIfNeeded} from '@augment-vir/node';
-import {extractRelevantArgs} from 'cli-args-vir';
+import {extractRelevantArgs, replaceWithWindowsPathIfNeeded} from '@augment-vir/node';
 import {glob} from 'glob';
 import {existsSync} from 'node:fs';
 import {relative, resolve} from 'node:path';
